@@ -1,11 +1,11 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres, { type Sql } from "postgres";
+import { drizzle, type DrizzleClient } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 import { env } from "../env";
 
-let _db: any = null;
+let _db: DrizzleClient<typeof schema> | null = null;
 
-function createDb(): any {
+function createDb(): DrizzleClient<typeof schema> {
   if (!env.DATABASE_URL) {
     throw new Error(
       "DATABASE_URL is not configured. Set DATABASE_URL in your environment to use the database."
@@ -16,22 +16,22 @@ function createDb(): any {
   return drizzle(client, { schema });
 }
 
-// Lazy getter so importing `db` doesn't immediately attempt to connect.
-export const getDb = (): any => {
+// Lazy getter to avoid connecting immediately
+export const getDb = (): DrizzleClient<typeof schema> => {
   if (!_db) {
     _db = createDb();
   }
   return _db;
 };
 
-// Backwards-compatible export: `db` will call getDb() and may throw if no URL.
+// Export db with Proxy for backward compatibility
 export const db = new Proxy(
-  {},
+  { schema }, // attach schema explicitly so you can do db.schema.posts
   {
     get: (_target, prop) => {
       const real = getDb();
-      // @ts-ignore delegate to the real db
-      return (real as any)[prop];
+      // @ts-ignore delegate to real db or fallback to schema
+      return (real as any)[prop] ?? (_target as any)[prop];
     },
   }
 );

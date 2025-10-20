@@ -2,16 +2,14 @@ import { Hero } from "@/components/landing/hero";
 import { Features } from "@/components/landing/features";
 import { Footer } from "@/components/landing/footer";
 import { Navigation } from "@/components/navigation";
+import { db } from "@/lib/db";
 
-export default function Home() {
+export default async function Home() {
   try {
-    if (!process.env.DATABASE_URL) {
-      console.log("Database url missing");
-    } else {
-      console.log("Database connected");
-    }
+    const posts = await db.select().from(db.schema.posts).limit(1);
+    console.log("Database connected:", posts.length, "posts found");
   } catch (err) {
-    console.log("DB Connection error", err);
+    console.error("DB connection error:", err);
   }
 
   return (
