@@ -1,15 +1,15 @@
-import { z } from 'zod';
-import { router, publicProcedure } from '../trpc';
-import { posts, postsToCategories, categories } from '@/lib/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { z } from "zod";
+import { router, publicProcedure } from "../trpc";
+import { posts, postsToCategories, categories } from "@/lib/db/schema";
+import { eq, desc, and } from "drizzle-orm";
 
 const createPostSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  slug: z.string().min(1, 'Slug is required'),
-  content: z.string().min(1, 'Content is required'),
-  excerpt: z.string().optional().default(''),
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  content: z.string().min(1, "Content is required"),
+  excerpt: z.string().optional().default(""),
   published: z.boolean().default(false),
-  authorName: z.string().default('Anonymous'),
+  authorName: z.string().default("Anonymous"),
   categoryIds: z.array(z.string().uuid()).optional().default([]),
 });
 
@@ -27,10 +27,12 @@ const updatePostSchema = z.object({
 export const postsRouter = router({
   getAll: publicProcedure
     .input(
-      z.object({
-        published: z.boolean().optional(),
-        categoryId: z.string().uuid().optional(),
-      }).optional()
+      z
+        .object({
+          published: z.boolean().optional(),
+          categoryId: z.string().uuid().optional(),
+        })
+        .optional()
     )
     .query(async ({ ctx, input }) => {
       const conditions = [];
@@ -65,11 +67,63 @@ export const postsRouter = router({
           .from(postsToCategories)
           .where(eq(postsToCategories.categoryId, input.categoryId));
 
-        const postIds = postIdsInCategory.map((p) => p.postId);
-        const filteredPosts = allPosts.filter((post) => postIds.includes(post.id));
+        const postIds = postIdsInCategory.map(
+          (p: { postId: string }) => p.postId
+        );
+        const filteredPosts = allPosts.filter((post: { id: string }) =>
+          postIds.includes(post.id)
+        );
 
         const postsWithCategories = await Promise.all(
-          filteredPosts.map(async (post) => {
+          filteredPosts.map(
+            async (post: {
+              id: string;
+              title: string;
+              slug: string;
+              content: string;
+              excerpt: string;
+              published: boolean;
+              authorName: string;
+              createdAt: Date;
+              updatedAt: Date;
+            }) => {
+              const postCategories = await ctx.db
+                .select({
+                  id: categories.id,
+                  name: categories.name,
+                  slug: categories.slug,
+                })
+                .from(postsToCategories)
+                .innerJoin(
+                  categories,
+                  eq(postsToCategories.categoryId, categories.id)
+                )
+                .where(eq(postsToCategories.postId, post.id));
+
+              return {
+                ...post,
+                categories: postCategories,
+              };
+            }
+          )
+        );
+
+        return postsWithCategories;
+      }
+
+      const postsWithCategories = await Promise.all(
+        allPosts.map(
+          async (post: {
+            id: string;
+            title: string;
+            slug: string;
+            content: string;
+            excerpt: string;
+            published: boolean;
+            authorName: string;
+            createdAt: Date;
+            updatedAt: Date;
+          }) => {
             const postCategories = await ctx.db
               .select({
                 id: categories.id,
@@ -77,36 +131,18 @@ export const postsRouter = router({
                 slug: categories.slug,
               })
               .from(postsToCategories)
-              .innerJoin(categories, eq(postsToCategories.categoryId, categories.id))
+              .innerJoin(
+                categories,
+                eq(postsToCategories.categoryId, categories.id)
+              )
               .where(eq(postsToCategories.postId, post.id));
 
             return {
               ...post,
               categories: postCategories,
             };
-          })
-        );
-
-        return postsWithCategories;
-      }
-
-      const postsWithCategories = await Promise.all(
-        allPosts.map(async (post) => {
-          const postCategories = await ctx.db
-            .select({
-              id: categories.id,
-              name: categories.name,
-              slug: categories.slug,
-            })
-            .from(postsToCategories)
-            .innerJoin(categories, eq(postsToCategories.categoryId, categories.id))
-            .where(eq(postsToCategories.postId, post.id));
-
-          return {
-            ...post,
-            categories: postCategories,
-          };
-        })
+          }
+        )
       );
 
       return postsWithCategories;
@@ -122,7 +158,7 @@ export const postsRouter = router({
         .limit(1);
 
       if (!post) {
-        throw new Error('Post not found');
+        throw new Error("Post not found");
       }
 
       const postCategories = await ctx.db
@@ -151,7 +187,7 @@ export const postsRouter = router({
         .limit(1);
 
       if (!post) {
-        throw new Error('Post not found');
+        throw new Error("Post not found");
       }
 
       const postCategories = await ctx.db
@@ -210,7 +246,7 @@ export const postsRouter = router({
         .returning();
 
       if (!updatedPost) {
-        throw new Error('Post not found');
+        throw new Error("Post not found");
       }
 
       if (categoryIds !== undefined) {

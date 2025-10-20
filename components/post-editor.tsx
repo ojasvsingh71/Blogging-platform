@@ -1,19 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Save, Eye } from 'lucide-react';
-import { generateSlug } from '@/lib/slug';
-import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Loader2, Save, Eye } from "lucide-react";
+import { generateSlug } from "@/lib/slug";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PostEditorProps {
   postId?: string;
@@ -23,11 +29,11 @@ export function PostEditor({ postId }: PostEditorProps) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [content, setContent] = useState('');
-  const [excerpt, setExcerpt] = useState('');
-  const [authorName, setAuthorName] = useState('');
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [authorName, setAuthorName] = useState("");
   const [published, setPublished] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [autoSlug, setAutoSlug] = useState(true);
@@ -47,10 +53,12 @@ export function PostEditor({ postId }: PostEditorProps) {
       setTitle(post.title);
       setSlug(post.slug);
       setContent(post.content);
-      setExcerpt(post.excerpt || '');
+      setExcerpt(post.excerpt);
       setAuthorName(post.authorName);
       setPublished(post.published);
-      setSelectedCategories(post.categories?.map((c) => c.id) || []);
+      setSelectedCategories(
+        post.categories?.map((c: { id: string }) => c.id) || []
+      );
       setAutoSlug(false);
     }
   }, [post]);
@@ -66,9 +74,9 @@ export function PostEditor({ postId }: PostEditorProps) {
 
     if (!title.trim() || !content.trim() || !slug.trim()) {
       toast({
-        title: 'Error',
-        description: 'Title, slug, and content are required',
-        variant: 'destructive',
+        title: "Error",
+        description: "Title, slug, and content are required",
+        variant: "destructive",
       });
       return;
     }
@@ -81,14 +89,14 @@ export function PostEditor({ postId }: PostEditorProps) {
           slug: slug.trim(),
           content: content.trim(),
           excerpt: excerpt.trim(),
-          authorName: authorName.trim() || 'Anonymous',
+          authorName: authorName.trim() || "Anonymous",
           published,
           categoryIds: selectedCategories,
         });
 
         toast({
-          title: 'Success',
-          description: 'Post updated successfully',
+          title: "Success",
+          description: "Post updated successfully",
         });
       } else {
         await createMutation.mutateAsync({
@@ -96,23 +104,23 @@ export function PostEditor({ postId }: PostEditorProps) {
           slug: slug.trim(),
           content: content.trim(),
           excerpt: excerpt.trim(),
-          authorName: authorName.trim() || 'Anonymous',
+          authorName: authorName.trim() || "Anonymous",
           published,
           categoryIds: selectedCategories,
         });
 
         toast({
-          title: 'Success',
-          description: 'Post created successfully',
+          title: "Success",
+          description: "Post created successfully",
         });
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to save post',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to save post",
+        variant: "destructive",
       });
     }
   };
@@ -137,9 +145,11 @@ export function PostEditor({ postId }: PostEditorProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{postId ? 'Edit Post' : 'Create New Post'}</CardTitle>
+          <CardTitle>{postId ? "Edit Post" : "Create New Post"}</CardTitle>
           <CardDescription>
-            {postId ? 'Update your blog post' : 'Write and publish a new blog post'}
+            {postId
+              ? "Update your blog post"
+              : "Write and publish a new blog post"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -223,7 +233,7 @@ export function PostEditor({ postId }: PostEditorProps) {
           <div>
             <Label className="mb-3 block">Categories</Label>
             <div className="flex flex-wrap gap-3">
-              {categories?.map((category) => (
+              {categories?.map((category: { id: string; name: string }) => (
                 <div key={category.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={category.id}
@@ -273,7 +283,7 @@ export function PostEditor({ postId }: PostEditorProps) {
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  {postId ? 'Update Post' : 'Create Post'}
+                  {postId ? "Update Post" : "Create Post"}
                 </>
               )}
             </Button>
@@ -281,7 +291,7 @@ export function PostEditor({ postId }: PostEditorProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push("/dashboard")}
             >
               Cancel
             </Button>

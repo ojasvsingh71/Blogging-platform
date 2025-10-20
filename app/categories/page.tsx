@@ -1,20 +1,26 @@
-'use client';
+"use client";
 
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/landing/footer';
-import { trpc } from '@/lib/trpc/client';
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/landing/footer";
+import { trpc } from "@/lib/trpc/client";
 
-export const dynamic = 'force-dynamic';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Plus, Trash2, Pencil } from 'lucide-react';
-import { useState } from 'react';
-import { generateSlug } from '@/lib/slug';
-import { useToast } from '@/hooks/use-toast';
-import { Toaster } from '@/components/ui/toaster';
+export const dynamic = "force-dynamic";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Plus, Trash2, Pencil } from "lucide-react";
+import { useState } from "react";
+import { generateSlug } from "@/lib/slug";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 import {
   Dialog,
   DialogContent,
@@ -22,16 +28,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 export default function CategoriesPage() {
   const { toast } = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
-  const { data: categories, isLoading, refetch } = trpc.categories.getAll.useQuery();
+  const {
+    data: categories,
+    isLoading,
+    refetch,
+  } = trpc.categories.getAll.useQuery();
   const createMutation = trpc.categories.create.useMutation();
   const updateMutation = trpc.categories.update.useMutation();
   const deleteMutation = trpc.categories.delete.useMutation();
@@ -39,9 +49,9 @@ export default function CategoriesPage() {
   const handleCreate = async () => {
     if (!name.trim()) {
       toast({
-        title: 'Error',
-        description: 'Category name is required',
-        variant: 'destructive',
+        title: "Error",
+        description: "Category name is required",
+        variant: "destructive",
       });
       return;
     }
@@ -54,19 +64,19 @@ export default function CategoriesPage() {
       });
 
       toast({
-        title: 'Success',
-        description: 'Category created successfully',
+        title: "Success",
+        description: "Category created successfully",
       });
 
-      setName('');
-      setDescription('');
+      setName("");
+      setDescription("");
       setIsCreateOpen(false);
       refetch();
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create category',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to create category",
+        variant: "destructive",
       });
     }
   };
@@ -83,40 +93,40 @@ export default function CategoriesPage() {
       });
 
       toast({
-        title: 'Success',
-        description: 'Category updated successfully',
+        title: "Success",
+        description: "Category updated successfully",
       });
 
       setEditingCategory(null);
-      setName('');
-      setDescription('');
+      setName("");
+      setDescription("");
       refetch();
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update category',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update category",
+        variant: "destructive",
       });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    if (!confirm("Are you sure you want to delete this category?")) return;
 
     try {
       await deleteMutation.mutateAsync({ id });
 
       toast({
-        title: 'Success',
-        description: 'Category deleted successfully',
+        title: "Success",
+        description: "Category deleted successfully",
       });
 
       refetch();
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete category',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to delete category",
+        variant: "destructive",
       });
     }
   };
@@ -124,13 +134,13 @@ export default function CategoriesPage() {
   const openEditDialog = (category: any) => {
     setEditingCategory(category);
     setName(category.name);
-    setDescription(category.description || '');
+    setDescription(category.description || "");
   };
 
   const closeDialog = () => {
     setEditingCategory(null);
-    setName('');
-    setDescription('');
+    setName("");
+    setDescription("");
     setIsCreateOpen(false);
   };
 
@@ -141,9 +151,7 @@ export default function CategoriesPage() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
           <div className="container mx-auto px-4 max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Categories</h1>
-            <p className="text-xl text-blue-100">
-              Manage your blog categories
-            </p>
+            <p className="text-xl text-blue-100">Manage your blog categories</p>
           </div>
         </div>
 
@@ -194,14 +202,17 @@ export default function CategoriesPage() {
                         Creating...
                       </>
                     ) : (
-                      'Create Category'
+                      "Create Category"
                     )}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
 
-            <Dialog open={!!editingCategory} onOpenChange={(open) => !open && closeDialog()}>
+            <Dialog
+              open={!!editingCategory}
+              onOpenChange={(open) => !open && closeDialog()}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Edit Category</DialogTitle>
@@ -238,7 +249,7 @@ export default function CategoriesPage() {
                         Updating...
                       </>
                     ) : (
-                      'Update Category'
+                      "Update Category"
                     )}
                   </Button>
                 </div>
@@ -252,37 +263,43 @@ export default function CategoriesPage() {
             </div>
           ) : categories && categories.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map((category) => (
-                <Card key={category.id}>
-                  <CardHeader>
-                    <CardTitle>{category.name}</CardTitle>
-                    <CardDescription>
-                      {category.description || 'No description'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditDialog(category)}
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(category.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {categories.map(
+                (category: {
+                  id: string;
+                  name: string;
+                  description: string;
+                }) => (
+                  <Card key={category.id}>
+                    <CardHeader>
+                      <CardTitle>{category.name}</CardTitle>
+                      <CardDescription>
+                        {category.description || "No description"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEditDialog(category)}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(category.id)}
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )}
             </div>
           ) : (
             <div className="text-center py-20">

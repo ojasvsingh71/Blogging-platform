@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/landing/footer';
-import { trpc } from '@/lib/trpc/client';
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/landing/footer";
+import { trpc } from "@/lib/trpc/client";
 
-export const dynamic = 'force-dynamic';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, Trash2, Pencil, Eye } from 'lucide-react';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
-import { Toaster } from '@/components/ui/toaster';
+export const dynamic = "force-dynamic";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Plus, Trash2, Pencil, Eye } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function DashboardPage() {
   const { toast } = useToast();
@@ -26,16 +32,16 @@ export default function DashboardPage() {
       await deleteMutation.mutateAsync({ id });
 
       toast({
-        title: 'Success',
-        description: 'Post deleted successfully',
+        title: "Success",
+        description: "Post deleted successfully",
       });
 
       refetch();
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete post',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to delete post",
+        variant: "destructive",
       });
     }
   };
@@ -50,9 +56,7 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
           <div className="container mx-auto px-4 max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Dashboard</h1>
-            <p className="text-xl text-blue-100">
-              Manage your blog posts
-            </p>
+            <p className="text-xl text-blue-100">Manage your blog posts</p>
           </div>
         </div>
 
@@ -85,22 +89,34 @@ export default function DashboardPage() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge variant="default">Published</Badge>
-                                {post.categories?.map((category) => (
-                                  <Badge key={category.id} variant="secondary">
-                                    {category.name}
-                                  </Badge>
-                                ))}
+                                {post.categories?.map(
+                                  (category: { id: string; name: string }) => (
+                                    <Badge
+                                      key={category.id}
+                                      variant="secondary"
+                                    >
+                                      {category.name}
+                                    </Badge>
+                                  )
+                                )}
                               </div>
-                              <CardTitle className="text-2xl">{post.title}</CardTitle>
+                              <CardTitle className="text-2xl">
+                                {post.title}
+                              </CardTitle>
                               <CardDescription className="mt-2">
-                                By {post.authorName} • {format(new Date(post.createdAt), 'MMM d, yyyy')}
+                                By {post.authorName} •{" "}
+                                {format(
+                                  new Date(post.createdAt),
+                                  "MMM d, yyyy"
+                                )}
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent>
                           <p className="text-gray-600 mb-4 line-clamp-2">
-                            {post.excerpt || post.content.substring(0, 150) + '...'}
+                            {post.excerpt ||
+                              post.content.substring(0, 150) + "..."}
                           </p>
                           <div className="flex gap-2">
                             <Link href={`/blog/${post.slug}`}>
@@ -147,22 +163,34 @@ export default function DashboardPage() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge variant="outline">Draft</Badge>
-                                {post.categories?.map((category) => (
-                                  <Badge key={category.id} variant="secondary">
-                                    {category.name}
-                                  </Badge>
-                                ))}
+                                {post.categories?.map(
+                                  (category: { id: string; name: string }) => (
+                                    <Badge
+                                      key={category.id}
+                                      variant="secondary"
+                                    >
+                                      {category.name}
+                                    </Badge>
+                                  )
+                                )}
                               </div>
-                              <CardTitle className="text-2xl">{post.title}</CardTitle>
+                              <CardTitle className="text-2xl">
+                                {post.title}
+                              </CardTitle>
                               <CardDescription className="mt-2">
-                                By {post.authorName} • {format(new Date(post.createdAt), 'MMM d, yyyy')}
+                                By {post.authorName} •{" "}
+                                {format(
+                                  new Date(post.createdAt),
+                                  "MMM d, yyyy"
+                                )}
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent>
                           <p className="text-gray-600 mb-4 line-clamp-2">
-                            {post.excerpt || post.content.substring(0, 150) + '...'}
+                            {post.excerpt ||
+                              post.content.substring(0, 150) + "..."}
                           </p>
                           <div className="flex gap-2">
                             <Link href={`/dashboard/edit/${post.id}`}>

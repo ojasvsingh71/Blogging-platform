@@ -1,23 +1,27 @@
-'use client';
+"use client";
 
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/landing/footer';
-import { trpc } from '@/lib/trpc/client';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, User, Loader2, ArrowLeft } from 'lucide-react';
-import { format } from 'date-fns';
-import ReactMarkdown from 'react-markdown';
-import { Button } from '@/components/ui/button';
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/landing/footer";
+import { trpc } from "@/lib/trpc/client";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, User, Loader2, ArrowLeft } from "lucide-react";
+import { format } from "date-fns";
+import ReactMarkdown from "react-markdown";
+import { Button } from "@/components/ui/button";
 
-export const dynamic = 'force-dynamic';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+export const dynamic = "force-dynamic";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function PostPage() {
   const params = useParams();
   const slug = params.slug as string;
 
-  const { data: post, isLoading, error } = trpc.posts.getBySlug.useQuery({ slug });
+  const {
+    data: post,
+    isLoading,
+    error,
+  } = trpc.posts.getBySlug.useQuery({ slug });
 
   return (
     <>
@@ -29,8 +33,12 @@ export default function PostPage() {
           </div>
         ) : error ? (
           <div className="container mx-auto px-4 max-w-4xl py-20 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Post Not Found</h1>
-            <p className="text-gray-600 mb-8">The post you're looking for doesn't exist.</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Post Not Found
+            </h1>
+            <p className="text-gray-600 mb-8">
+              The post you're looking for doesn't exist.
+            </p>
             <Link href="/blog">
               <Button>
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -50,11 +58,13 @@ export default function PostPage() {
                 </Link>
 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {post.categories?.map((category) => (
-                    <Badge key={category.id} variant="secondary">
-                      {category.name}
-                    </Badge>
-                  ))}
+                  {post.categories?.map(
+                    (category: { id: string; name: string }) => (
+                      <Badge key={category.id} variant="secondary">
+                        {category.name}
+                      </Badge>
+                    )
+                  )}
                 </div>
 
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -68,7 +78,7 @@ export default function PostPage() {
                   </span>
                   <span className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
-                    {format(new Date(post.createdAt), 'MMMM d, yyyy')}
+                    {format(new Date(post.createdAt), "MMMM d, yyyy")}
                   </span>
                 </div>
               </div>
