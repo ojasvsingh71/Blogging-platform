@@ -35,8 +35,8 @@ A full-stack blog platform built with Next.js 13+, tRPC, Drizzle ORM, and Postgr
 1. Clone the repository:
 
    ```bash
-   git clone <your-repo-url>
-   cd Blog2.0
+   git clone https://github.com/ojasvsingh71/Blogging-platform.git
+   cd Blogging-platform
    ```
 
 2. Install dependencies:
