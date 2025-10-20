@@ -4,9 +4,14 @@ import { Footer } from "@/components/landing/footer";
 import { Navigation } from "@/components/navigation";
 
 export default function Home() {
-
-  if(!process.env.DATABASE_URL){
-    console.log("Database url missing");
+  try {
+    if (!process.env.DATABASE_URL) {
+      console.log("Database url missing");
+    } else {
+      console.log("Database connected");
+    }
+  } catch (err) {
+    console.log("DB Connection error", err);
   }
 
   return (
